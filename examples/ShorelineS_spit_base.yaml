@@ -1,0 +1,39 @@
+smoothfac: 0.  ## ALWAYS USE FLOATS
+Hso: 1.
+phiw0: 235.
+spread: 0.
+d: 5.
+ddeep: 100.
+dnearshore: 100.
+LDBcoastline: D:/HCORDEIRO/shorelines_project/shorelines/script/Data/spit.xy
+phif: 270.
+trform: "VR14"
+B: 1000000.  #1e6
+tper: 7.
+d50: 0.0002
+porosity: 0.4
+tanbeta: 0.05
+reftime: 2020-01-01
+endofsimulation: 2022-01-01
+ds0: 100.
+Courant: 1.
+tc: 0.
+dt: 0.0055  # 2/365
+struct: 0.
+twopoints: 2.
+LDBstructures: ''
+growth: 0.
+nourish: 0.
+LDBnourish: ''
+nourrate: 100.
+nourstart: 0.
+spit_width: 100.
+xlimits: [-1000., 1500.]
+ylimits: [0., 10000.]
+XYwave: []
+XYoffset: [0., 0.]
+pauselength: []
+fignryear: 4.
+storageinterval: 91.25  #365/4
+outputdir: outputs/spit_base  # relative to wrapper working dir (matlab working dir)
+debug: 0.

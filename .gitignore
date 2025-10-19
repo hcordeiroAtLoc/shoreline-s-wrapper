@@ -1,0 +1,28 @@
+# Byte-code files
+*.pyc
+*.pyo
+__pycache__/
+
+# Distribution / packaging
+.Python
+env/
+venv/
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Editors
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# matlab/model
+pathdef.m
+logfile.txt
