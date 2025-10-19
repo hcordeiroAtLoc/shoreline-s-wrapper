@@ -1,4 +1,4 @@
-# shoreline-s-wrapper
+# shoreline-s-wrapper **IN DEVELOPMENT**
 
 A lightweight Python interface for the **ShorelineS** one-line shoreline evolution model (Roelvink et al., 2020).  
 The user provides a YAML configuration file that defines simulation parameters and allows inclusion of comments.  
