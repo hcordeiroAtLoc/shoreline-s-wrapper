@@ -1,8 +1,7 @@
 import scipy.io as sio
 import numpy as np
 import pandas as pd
-from datetime import timedelta, date
-from typing import Dict, Any, List, Union, Optional
+from typing import Dict, Any, Union, Optional
 from pathlib import Path
 
 START_DATE_FIELD = "reftime"
@@ -20,7 +19,9 @@ class TimeAxis:
         """
         A unified time-axis generator for both calendar-based and synthetic model runs.
         """
-        self.timestep_in_days = pd.to_timedelta(timestep_in_years * 365, unit="D").round("s")
+        self.timestep_in_days = pd.to_timedelta(
+            timestep_in_years * 365, unit="D"
+        ).round("s")
         self.iteration_array = iteration_array
         self.start_date = pd.Timestamp(start_date) if start_date else None
         self.synthetic = self.start_date is None
@@ -28,16 +29,19 @@ class TimeAxis:
 
     def _build_time_vector(self):
         """Constructs the time vector depending on the mode."""
-        
+
         if self.synthetic:
             raise ValueError("Synthetic time vector creation not implemented.")
-        
+
         # Calendar-based run
         if self.start_date is not None:
             return np.array(
-                [self.start_date + self.timestep_in_days * it for it in self.iteration_array]
+                [
+                    self.start_date + self.timestep_in_days * it
+                    for it in self.iteration_array
+                ]
             )
-        
+
     def __len__(self):
         """Return number of time steps in time vector."""
         return len(self.time_vector)
@@ -73,6 +77,7 @@ def load_shoreline_matfile(matfile_path: Path) -> Dict[str, Any]:
 
     return results
 
+
 def extract_from_matlab_array(data, field_name: str, default=np.array([])):
     # TODO  make key-safe
     field_data = np.array(data[field_name]).squeeze()
@@ -93,24 +98,24 @@ def extract_time_vector(modeled_data: Dict[str, Any], config: dict) -> TimeAxis:
 
     iterations = extract_from_matlab_array(modeled_data, iterations_array_key)
     timesteps = extract_from_matlab_array(modeled_data, timesteps_array_key)
-    
+
     # Arrays of iterations carry the number of dts passed until output
     # The frequency is given by ShorelineS param "storageinterval"
     # i.e: [0, 360] for a dt of 1 hour -> [0, 15 days]
     # i.e: [0, 365] for a dt of 1 day  -> [0, 1 year]
     iteration_array = iterations if len(iterations) > 0 else timesteps
-    
+
     if start_date:
         return TimeAxis(
-            timestep_in_years=timestep_in_years, 
-            iteration_array=iteration_array, 
-            start_date=start_date
-            )
+            timestep_in_years=timestep_in_years,
+            iteration_array=iteration_array,
+            start_date=start_date,
+        )
 
     return TimeAxis(
-            timestep_in_years=timestep_in_years, 
-            iteration_array=iteration_array, 
-            )
+        timestep_in_years=timestep_in_years,
+        iteration_array=iteration_array,
+    )
 
 
 def extract_coastline_data(modeled_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -119,9 +124,9 @@ def extract_coastline_data(modeled_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     # TODO make safe, warn when arrays empty
     return {
-            "x": extract_from_matlab_array(modeled_data, "x"),
-            "y": extract_from_matlab_array(modeled_data, "y"),
-            }
+        "x": extract_from_matlab_array(modeled_data, "x"),
+        "y": extract_from_matlab_array(modeled_data, "y"),
+    }
 
 
 def make_time_indexed_coastline_df(
@@ -153,6 +158,8 @@ def make_time_indexed_coastline_df(
         )
 
     time_index = np.repeat(time_vector, group_size)
-    df = pd.DataFrame({"x": x.flatten(), "y": y.flatten()}, index=pd.DatetimeIndex(time_index))
+    df = pd.DataFrame(
+        {"x": x.flatten(), "y": y.flatten()}, index=pd.DatetimeIndex(time_index)
+    )
     df.index.name = "time"
     return df

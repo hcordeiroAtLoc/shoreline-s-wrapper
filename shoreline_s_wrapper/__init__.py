@@ -79,10 +79,3 @@ __all__ = [
     "extract_coastline_data",
     "make_time_indexed_coastline_df",
 ]
-
-
-if __name__ == "__main__":
-    config_path = (
-        "d:\HCORDEIRO\shorelines_project\workspace\configs\ShorelineS_spit_base.yaml"
-    )
-    inputs, results = run_shoreline_simulation(config_path)
