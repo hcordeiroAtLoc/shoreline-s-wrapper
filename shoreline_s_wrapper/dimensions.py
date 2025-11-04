@@ -7,7 +7,9 @@ MODELLING_PROJECT_ROOT = "d:\HCORDEIRO\shorelines_project"  # TODO dynamize
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 
 # Required fields for ShorelineS (must be present in config)
-REQUIRED_FIELDS = []
+REQUIRED_FIELDS = [
+    "storageinterval",
+    ]
 
 KNOWN_PATH_FIELDS = {
     'LDBcoastline', 'LDBnourish', 'fnorfile', 'outputdir',

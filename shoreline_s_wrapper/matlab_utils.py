@@ -80,15 +80,23 @@ class MATLABSession:
         return self.eng is not None
 
 
-def initialize_matlab_paths(eng, root_path = MODELLING_PROJECT_ROOT):
+def initialize_matlab_paths(
+        eng, 
+        root_path = None
+        ):
     """Set up MATLAB paths from Python"""
-    root_path = Path(root_path)
-    model_dir = Path("shorelines")
+    matlab_functions_dir = Path("mat_functions")
+    if root_path:
+        root_path = Path(root_path)
+    else:
+        # NOTE: sensitive to changes in dir structure
+        # Get the absolute path to this file's directory
+        current_file = Path(__file__).resolve()
+        root_path = current_file.parent.parent 
+        logging.info(f"root path: {root_path}")
 
     paths_to_add = [
-        root_path / model_dir,
-        root_path / Path('workspace'),
-        root_path / model_dir / Path('functions'),    
+        root_path / matlab_functions_dir,
     ]
     
     for path in paths_to_add:

@@ -25,7 +25,7 @@ setup(
         "pandas>=1.3,<2.0", 
         "PyYAML>=5.3.1,<7.0",
         "scipy>=1.6,<1.8",
-        # NOTE: matlab.engine must be installed separately via MATLAB
+        "matlabengine==9.10.1" # NOTE: for R2020b, py3.8. Depends on matlab version
     ],
     
     # Optional dependencies
@@ -43,9 +43,9 @@ setup(
     },
     
     # Metadata
-    #author="Your Name",
-    #author_email="your.email@example.com",
-    #url="https://github.com/yourusername/shoreline-s-wrapper",
+    author="Henrique Faria Cordeiro",
+    author_email="hcordeiro.loc@gmail.com",
+    url="https://github.com/hcordeiroAtLoc/shoreline-s-wrapper",
     #classifiers=[
     #    "Development Status :: 3 - Alpha",
     #    "Intended Audience :: Science/Research",

@@ -1,5 +1,5 @@
 import logging
-
+from time import time
 import shoreline_s_wrapper.config_loader as cl
 import shoreline_s_wrapper.matlab_utils as mu
 from shoreline_s_wrapper.extract import (
@@ -38,7 +38,18 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def run_shoreline_simulation(config_path: str):
+def run_with_engine(config, eng):
+    mu.initialize_matlab_paths(eng)
+    ml_config = mu.config_to_matlab_struct(eng, config)
+
+    # model execution
+    start_time = time()
+    state, output = eng.ShorelineS(ml_config, nargout=2)
+    logger.info(f"Simulation Done in {round(time() - start_time, 2)} seconds")
+    return state, output
+
+
+def run_shoreline_simulation(config_path: str, eng=None):
     """
     Complete workflow from YAML to model execution
     """
@@ -50,17 +61,14 @@ def run_shoreline_simulation(config_path: str):
         logger.error("Missing shoreline_s required fields!")
         raise ValueError()
 
-    with mu.MATLABSession() as session:
-        logger.info("Initialized Matlab Engine")
-        eng = session.eng
-        logger.info(eng.pwd())
-        mu.initialize_matlab_paths(eng)
-        ml_config = mu.config_to_matlab_struct(eng, config_date_casted)
-        logger.info(ml_config)
+    if not eng:
+        with mu.MATLABSession() as session:
+            logger.info("Initialized Matlab Engine")
+            state, output = run_with_engine(config_date_casted, eng=session.eng)
+            return state, output
 
-        # Your model execution - will cleanup even if interrupted
-        S, O = eng.ShorelineS(ml_config, nargout=2)
-        return S, O
+    state, output = run_with_engine(config_date_casted, eng=eng)
+    return state, output
 
 
 # Export main function for easy import
