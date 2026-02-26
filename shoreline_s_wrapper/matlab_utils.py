@@ -103,6 +103,14 @@ def initialize_matlab_paths(
         ml_paths = eng.genpath(str(path))
         eng.addpath(ml_paths, nargout=0)
 
+def looks_like_matlab_cell(s: str) -> bool:
+    s = s.strip()
+    return s.startswith("{") and s.endswith("}") and "," in s
+
+def is_known_str_type_list(k: str) -> bool:
+        str_type_list_keys = {"LDBplot"}  # TODO move to dimensions
+        return k in str_type_list_keys
+
 def config_to_matlab_struct(eng: matlab.engine.MatlabEngine, 
                           config: Dict[str, Any]) -> Any:
     """
@@ -114,8 +122,9 @@ def config_to_matlab_struct(eng: matlab.engine.MatlabEngine,
         MATLAB struct ready for ShorelineS
     """
     ml_struct = eng.struct()
-    
+
     for key, value in config.items():
+        # logging.info(f"Processing: {key}, {value}")
         # Skip any remaining metadata fields
         if key.startswith('_'):
             continue
@@ -124,9 +133,19 @@ def config_to_matlab_struct(eng: matlab.engine.MatlabEngine,
         if value is None:
             ml_struct[key] = eng.nan  # TODO validate this behavior
         # Convert lists to MATLAB arrays
+
+        if isinstance(value, str) and looks_like_matlab_cell(value):
+             ml_struct[key] = eng.eval(value)   ## FIXME dangerous
+
         elif isinstance(value, list):
-            clean_list = [v if v is not None else eng.nan for v in value]
-            ml_struct[key] = matlab.double(clean_list)
+            if len(value) == 0:
+                ml_struct[key] = matlab.double([])
+            elif is_known_str_type_list(key):
+                ml_struct[key] = eng.cellstr(value)
+            else:
+                clean_list = [v if v is not None else eng.nan for v in value]  # mixing types ......
+                ml_struct[key] = matlab.double(clean_list)
+            
         # Pass through other values
         else:
             ml_struct[key] = value
