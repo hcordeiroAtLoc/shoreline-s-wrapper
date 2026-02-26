@@ -1,5 +1,7 @@
 import logging
 from time import time
+from pathlib import Path
+from typing import Union, Dict, Any
 import shoreline_s_wrapper.config_loader as cl
 import shoreline_s_wrapper.matlab_utils as mu
 from shoreline_s_wrapper.extract import (
@@ -49,12 +51,19 @@ def run_with_engine(config, eng):
     return state, output
 
 
-def run_shoreline_simulation(config_path: str, eng=None):
+def run_shoreline_simulation(config_input: Union[str, Path, Dict[str, Any]], eng=None):
     """
-    Complete workflow from YAML to model execution
+    Complete workflow from config to model execution
     """
-    logger.info("Loading yaml config file")
-    config = cl.load_yaml_config(config_path)
+    if isinstance(config_input, (str, Path)):
+        logger.info(f"Loading yaml config file: {config_input}")
+        config = cl.load_yaml_config(str(config_input))
+    elif isinstance(config_input, dict):
+        logger.info("Loading provided config dictionary")
+        config = config_input.copy()
+    else:
+        raise TypeError(f"config_input must be str, Path, or dict, got {type(config_input)}")
+    
     config_date_casted = cl.cast_config_datetime_obj_to_date_str(config)
 
     if not cl.is_all_required_fields_present(config):
